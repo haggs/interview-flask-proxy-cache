@@ -1,0 +1,25 @@
+table, th, td {
+    padding: 5px;
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+
+div {
+    font-family: Arial;
+}
+
+a {
+    text-decoration: none;
+}
+
+th {
+    text-align: center;
+    font-weight: bold;
+    font-style: italic;
+    background-color: lightgray;
+}
+
+.configuration_column_1 {
+    font-weight: bold;
+    text-align: left;
+}

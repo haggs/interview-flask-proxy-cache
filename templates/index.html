@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Flask Proxy Cache</title>
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css')}}"/>
+    </head>
+        <div>
+            <center>
+                <h1>Cached Proxy Server</h1>
+                <h3>powered by <a href="http://flask.pocoo.org/" target="_blank">Flask</a></h3>
+                <h3>written by <a href="https://github.com/haggs" target="_blank">Dan Haggerty</a></h3>
+                <p>Running on port: {{port}}</p>
+                <br/>
+                <table>
+                    <tr>
+                        <th colspan="2">Cache Configuration</th>
+                    </tr>
+                    <tr>
+                        <td class="configuration_column_1">Cache Duration (ms)</td>
+                        <td>{{ cache_duration_ms }}</td>
+                    </tr>
+                    <tr>
+                        <td class="configuration_column_1">Cache Size (Bytes)</td>
+                        <td>{{ cache_size_bytes }}</td>
+                    </tr>
+                    <tr>
+                        <td class="configuration_column_1">Cache Size (Elements)</td>
+                        <td>{{ cache_size_elements }}</td>
+                    </tr>
+                </table>
+                <br/>
+                <br/>
+                <table>
+                    <tr>
+                        <th colspan="2">Cache Contents</th>
+                    </tr>
+                    {% if not response_cache.length() %}
+                        <tr>
+                            <td>Cache is currently empty</td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <th>GET Request URL</th>
+                            <th>Response</th>
+                            <th>Last Updated</th>
+                        </tr>
+                        {% for url in response_cache %}
+                            <tr>
+                                <td>{{ url }}</td>
+                                <td>{{ response_cache[url]['response'] }}</td>
+                                <td>{{ response_cache.get_time(url) }}</td>
+                                <td>{{ response_cache.get_size(url) }}</td>
+                            </tr>
+                        {% endfor %}
+
+                    {% endif %}
+                </table>
+            </center>
+        </div>
+    </body>
+</html>
