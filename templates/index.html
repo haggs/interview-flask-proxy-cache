@@ -20,11 +20,11 @@
                         <td>{{ cache_duration_ms }}</td>
                     </tr>
                     <tr>
-                        <td class="configuration_column_1">Cache Size (Bytes)</td>
+                        <td class="configuration_column_1">Max. Total Cache Size (Bytes)</td>
                         <td>{{ cache_size_bytes }}</td>
                     </tr>
                     <tr>
-                        <td class="configuration_column_1">Cache Size (Elements)</td>
+                        <td class="configuration_column_1">Max. Total Cache Size (Elements)</td>
                         <td>{{ cache_size_elements }}</td>
                     </tr>
                 </table>
@@ -32,29 +32,27 @@
                 <br/>
                 <table class="cache_table">
                     <tr>
-                        <th colspan="4">Cache Contents</th>
+                        <th colspan="3">Cache Contents</th>
                     </tr>
                     {% if not response_cache.length() %}
                         <tr>
-                            <td colspan="4">Cache is currently empty</td>
+                            <td colspan="3">Cache is currently empty</td>
                         </tr>
                     {% else %}
                         <tr>
                             <th>GET Request URL</th>
-                            <th>Response</th>
                             <th>Last Updated</th>
                             <th>Size of Entry (Bytes)</th>
                         </tr>
                         {% for url in response_cache %}
                             <tr>
                                 <td>{{ url }}</td>
-                                <td>{{ response_cache[url]['response'] }}</td>
                                 <td>{{ response_cache.get_time(url) }}</td>
                                 <td>{{ response_cache.get_size(url) }}</td>
                             </tr>
                         {% endfor %}
                         <tr>
-                            <th colspan="2"></th>
+                            <th></th>
                             <th>Total Size (Bytes)</th>
                             <th>{{ response_cache.get_total_size() }}</th>
                         </tr>

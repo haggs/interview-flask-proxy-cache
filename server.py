@@ -45,7 +45,7 @@ def root(url):
     # LOG.info("Root route, path: %s", url)
     # If referred from a proxy request, then redirect to a URL with the proxy prefix.
     # This allows server-relative and protocol-relative URLs to work.
-    CACHE.insert(url, str(url) + " RESPONSE")
+    # CACHE.insert(url, str(url) + " RESPONSE")
     proxy_ref = proxy_ref_info(request)
     if proxy_ref:
         redirect_url = "/p/%s/%s%s" % (proxy_ref[0], url, ("?" + request.query_string if request.query_string else ""))
@@ -55,7 +55,7 @@ def root(url):
     return "Welcome to my little cache proxy server"
 
 
-@app.route('/p/<path:url>')
+@app.route('/proxy/<path:url>')
 def proxy(url):
     CACHE.insert(url, str(url) + " RESPONSE")
     """Fetches the specified URL and streams it out to the client.

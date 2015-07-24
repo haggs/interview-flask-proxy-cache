@@ -8,6 +8,7 @@ table, th, td {
 }
 
 .cache_table {
+    table-layout: fixed;
     width: 70%;
 }
 
