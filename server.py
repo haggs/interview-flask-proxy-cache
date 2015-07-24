@@ -30,9 +30,6 @@ except:
 # Instantiate a ResponseCache with the attributes given by the configuration file
 CACHE = ResponseCache(CACHE_DURATION_MS, CACHE_SIZE_BYTES, CACHE_SIZE_ELEMENTS)
 
-CACHE.insert("www.google.com", "GOOGLE RESPONSE")
-CACHE.insert("www.facebook.com", "FACEBOOK RESPONSE")
-CACHE.insert("www.reddit.com", "REDDIT RESPONSE")
 
 @app.route('/')
 def home():
@@ -48,6 +45,7 @@ def root(url):
     # LOG.info("Root route, path: %s", url)
     # If referred from a proxy request, then redirect to a URL with the proxy prefix.
     # This allows server-relative and protocol-relative URLs to work.
+    CACHE.insert(url, str(url) + " RESPONSE")
     proxy_ref = proxy_ref_info(request)
     if proxy_ref:
         redirect_url = "/p/%s/%s%s" % (proxy_ref[0], url, ("?" + request.query_string if request.query_string else ""))
@@ -59,6 +57,7 @@ def root(url):
 
 @app.route('/p/<path:url>')
 def proxy(url):
+    CACHE.insert(url, str(url) + " RESPONSE")
     """Fetches the specified URL and streams it out to the client.
     If the request was referred by the proxy itself (e.g. this is an image fetch for
     a previously proxied HTML page), then the original Referer is passed."""

@@ -30,19 +30,20 @@
                 </table>
                 <br/>
                 <br/>
-                <table>
+                <table class="cache_table">
                     <tr>
-                        <th colspan="2">Cache Contents</th>
+                        <th colspan="4">Cache Contents</th>
                     </tr>
                     {% if not response_cache.length() %}
                         <tr>
-                            <td>Cache is currently empty</td>
+                            <td colspan="4">Cache is currently empty</td>
                         </tr>
                     {% else %}
                         <tr>
                             <th>GET Request URL</th>
                             <th>Response</th>
                             <th>Last Updated</th>
+                            <th>Size of Entry (Bytes)</th>
                         </tr>
                         {% for url in response_cache %}
                             <tr>
@@ -52,6 +53,11 @@
                                 <td>{{ response_cache.get_size(url) }}</td>
                             </tr>
                         {% endfor %}
+                        <tr>
+                            <th colspan="2"></th>
+                            <th>Total Size (Bytes)</th>
+                            <th>{{ response_cache.get_total_size() }}</th>
+                        </tr>
 
                     {% endif %}
                 </table>

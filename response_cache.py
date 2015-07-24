@@ -2,6 +2,7 @@
 This is our really simple cache class. It's more-or-less a key-value store of URL's to GET responses.
 '''
 from datetime import datetime
+import pytz
 import sys
 
 class ResponseCache:
@@ -37,16 +38,23 @@ class ResponseCache:
             raise Exception("ResponseCache: CACHE_SIZE_ELEMENTS must be greater than 0")
 
     def get_time(self, url):
-        return self.cache_dict[url]['last_updated']
+        return self.cache_dict[url]['last_updated'].strftime("%Y-%m-%d %H:%M:%S %Z")
 
     def get_size(self, url):
         return sys.getsizeof(self.cache_dict[url])
+
+    def get_total_size(self):
+        size = 0
+        for url in self.cache_dict:
+            size += self.get_size(url)
+        return size
 
     def insert(self, url, response):
         if url in self.cache_dict:
             return self.cache_dict[url]
         else:
-            self.cache_dict[url] = {'response': response, "last_updated": datetime.now()}
+            result = self.cache_dict[url] = {'response': response, "last_updated": datetime.now(pytz.timezone("US/Pacific"))}
+            return result
 
     def delete(self, url):
         del self.cache_dict[url]
