@@ -7,6 +7,10 @@ table, th, td {
     white-space:nowrap;
 }
 
+.log_entry {
+    text-align: left;
+}
+
 .cache_table {
     table-layout: fixed;
     width: 70%;

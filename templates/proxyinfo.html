@@ -59,6 +59,18 @@
 
                     {% endif %}
                 </table>
+                <br/>
+                <br/>
+                <table class="cache_table">
+                    <tr>
+                        <th>Cache Log</th>
+                    </tr>
+                    {% for entry in response_cache.log %}
+                        <tr>
+                            <td class="log_entry">{{ entry }}</td>
+                        </tr>
+                    {% endfor %}
+                </table>
             </center>
         </div>
     </body>

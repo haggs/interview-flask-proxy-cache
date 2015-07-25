@@ -1,17 +1,29 @@
 #########################################################################################################
 # This is a simple Flask app that acts as a caching proxy for GET requests. It accepts incoming GET
 # requests and forwards them on their destination using a simple caching layer represented by the
-# ResponseCache class.
+# ResponseCache class. Port number and cache configuration are set in conf.py.
+#
+# Usage: Run this file (python server.py).
+#        Navigate to localhost:PORT/proxyinfo to see the status of the cache
+#        Navigate to localhost:PORT/proxy/www.google.com (for example) to use the proxy
+#
+# Requirements: Python 2.7
+#               Flask
+#               requests
+#
+# Author: Dan Haggerty, daniel.r.haggerty@gmail.com
+# Date:   July 25th, 2015
+#
 #########################################################################################################
 from flask import Flask, url_for, render_template, request, abort, Response, redirect
 import requests
 from response_cache import ResponseCache
 from urlparse import urlparse
-# import logging
+import logging
 
 # Setup logging
-# logging.basicConfig(level=logging.INFO)
-# LOG = logging.getLogger("main.py")
+logging.basicConfig(level=logging.INFO)
+LOG = logging.getLogger("main.py")
 
 
 # Define our Flask app
@@ -23,17 +35,20 @@ try:
     assert CACHE_DURATION_MS   and isinstance(CACHE_DURATION_MS, int)
     assert CACHE_SIZE_BYTES    and isinstance(CACHE_SIZE_BYTES, int)
     assert CACHE_SIZE_ELEMENTS and isinstance(CACHE_SIZE_ELEMENTS, int)
+    assert LOG_TABLE_MAX_SIZE  and isinstance(LOG_TABLE_MAX_SIZE, int)
     assert PORT                and isinstance(PORT, int)
 except:
-    raise Exception("Import of conf.py was unsuccessful. Make sure you've defined a conf.py containing "
-                    "CACHE_DURATION_MS, CACHE_SIZE_BYTES, CACHE_SIZE_ELEMENTS, and PORT defined as ints")
+    msg = "Import of conf.py was unsuccessful. Make sure you've defined a conf.py containing " \
+          "CACHE_DURATION_MS, CACHE_SIZE_BYTES, CACHE_SIZE_ELEMENTS, and PORT defined as ints"
+    LOG.info(msg)
+    raise Exception(msg)
 
 
 # Instantiate a ResponseCache with the attributes given by the configuration file
-CACHE = ResponseCache(CACHE_DURATION_MS, CACHE_SIZE_BYTES, CACHE_SIZE_ELEMENTS)
+CACHE = ResponseCache(CACHE_DURATION_MS, CACHE_SIZE_BYTES, CACHE_SIZE_ELEMENTS, LOG_TABLE_MAX_SIZE, LOG)
 
 
-# Display the rendered proxyinfo page if the user navigates to 'localhost:5000/proxyinfo'
+# Display the rendered proxyinfo page if the user navigates to 'localhost:PORT/proxyinfo'
 @app.route('/proxyinfo')
 def home():
     return render_proxyinfo_page()
@@ -60,7 +75,6 @@ def proxy(url):
 #
 @app.route('/<path:url>')
 def root(url):
-    # CACHE.insert(url, str(url) + " RESPONSE")
     # LOG.info("Root route, path: %s", url)
     # If referred from a proxy request, then redirect to a URL with the proxy prefix.
     # This allows server-relative and protocol-relative URLs to work.
