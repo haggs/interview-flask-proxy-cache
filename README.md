@@ -17,11 +17,15 @@ so it might be a little sloppy. Give it a try, let me know what you think :)
 
 I recommend you use virtualenv to run the server, so you don't mess with your Python install. To install virtualenv, do:
 
-```sudo apt-get install python-virtualenv```
+```
+sudo apt-get install python-virtualenv
+```
 
 To initialize your virtual environment, cd to the directory that contains this repository and do:
 
-```virtualenv environment```
+```
+virtualenv environment
+```
 
 To install the required Python modules in your virtual environment, do:
 
