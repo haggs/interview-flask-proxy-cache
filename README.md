@@ -16,12 +16,15 @@ so it might be a little sloppy. Give it a try, let me know what you think :)
   * requests
 
 I recommend you use virtualenv to run the server, so you don't mess with your Python install. To install virtualenv, do:
+
 ```sudo apt-get install python-virtualenv```
 
 To initialize your virtual environment, cd to the directory that contains this repository and do:
+
 ```virtualenv environment```
 
 To install the required Python modules in your virtual environment, do:
+
 ```
 environment/bin/pip install flask
 environment/bin/pip install requests
@@ -38,11 +41,13 @@ PORT = 5000
 ```
 
 If you're using virtualenv as described above, run the server by doing:
+
 ```
 environment/bin/python server.py
 ```
 
 Otherwise just do:
+
 ```python server.py```
 
 Now that the server is running, I recommend you keep two browser tabs open:
