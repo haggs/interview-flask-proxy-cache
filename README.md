@@ -8,7 +8,7 @@ around with Flask and a few Python modules like requests, urlparse, etc. I wrote
 so it might be a little sloppy. Give it a try, let me know what you think :)
 
 ### Requirements
-** Note:** This was developed and tested in an Ubuntu 12.04 virtual machine
+**Note:** This was developed and tested in an Ubuntu 12.04 virtual machine
 
 * Python (tested with Python 2.7)
 * Python Modules
@@ -48,7 +48,7 @@ Otherwise just do:
 Now that the server is running, I recommend you keep two browser tabs open:
 * In the first tab, go to **localhost:PORT/proxyinfo** (port 5000 is default).
 This shows general information about the cache. It's not that dynamic, so refresh it after every request.
-* In the second tab, go to **localhost:PORT/proxy/www.google.com (for example) to use the proxy and cache.
+* In the second tab, go to **localhost:PORT/proxy/www.google.com** (for example) to use the proxy and cache.
 
 Look at the log in the proxyinfo page to see what the cache is doing.
 
