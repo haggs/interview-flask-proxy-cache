@@ -17,7 +17,6 @@ from flask import request
 import requests
 from urlparse import urlparse
 from datetime import datetime
-import pytz
 import sys
 
 class ResponseCache:
@@ -75,14 +74,14 @@ class ResponseCache:
 
     # If a cache entry is older than CACHE_DURATION_MS in conf.py, return True
     def cache_expired(self, url):
-        age_ms = datetime.now(pytz.timezone("US/Pacific")) - self.cache_dict[url]['last_updated']
+        age_ms = datetime.now() - self.cache_dict[url]['last_updated']
         if age_ms.seconds * 1000 + age_ms.microseconds / 1000 > self.cache_duration_ms:
             return True
         return False
 
     # Delete the oldest cache entry
     def delete_oldest(self):
-        oldest = datetime.now(pytz.timezone("US/Pacific"))
+        oldest = datetime.now()
         for url in self.cache_dict:
             if self.cache_dict[url]['last_updated'] < oldest:
                 self.delete(url)
@@ -119,7 +118,7 @@ class ResponseCache:
         # Finally add the response, its headers, and the time we updated the record to the internal cache dictionary.
         self.cache_dict[url] = { "response" : response,
                                  "headers"  : dict(req.headers),
-                                 "last_updated" : datetime.now(pytz.timezone("US/Pacific"))
+                                 "last_updated" : datetime.now()
                                }
 
     # Delete the URL from the internal cache dictionary
