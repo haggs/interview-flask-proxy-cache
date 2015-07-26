@@ -1,5 +1,17 @@
 #########################################################################################################
-# This is our really simple cache class. It's more-or-less a key-value store of URL's to GET responses.
+# This is a simple cache class that caches GET request responses. It's essentially a key-value store
+# with the following structure:
+#
+#     Key   Value
+#     URL : { Response,
+#             Headers,
+#             Time Last Updated
+#           }
+#
+# The attributes of the cache are configured in conf.py and passed into the constructor.
+#
+# Author:    Dan Haggerty, daniel.r.haggerty@gmail.com
+# Date:      July 25th, 2015
 #########################################################################################################
 from flask import request
 import requests
@@ -76,6 +88,7 @@ class ResponseCache:
                 self.delete(url)
                 break
 
+    # Insert the URL and its response, headers, and timestamp into the cache
     def insert(self, url):
 
         # If adding this element puts us over our cache size (elements) limit, delete this oldest record
@@ -113,12 +126,11 @@ class ResponseCache:
     def delete(self, url):
         del self.cache_dict[url]
 
-    # Fetches the specified URL and streams it out to the client.
-    # If the request was referred by the proxy itself (e.g. this is an image fetch for
-    # a previously proxied HTML page), then the original Referer is passed.
+    # Get the response for the provided URL. If it doesn't already exist in the cache,
+    # insert it (the request is done in the insert() method. If it exists, but it's stale,
+    # delete it and insert it again. If it exists and isn't stale, return the headers and response
     def get(self, url):
         url = 'http://' + url
-        # LOG.info("Fetching %s", url)
         # Pass original Referer for subsequent resource requests
 
         # Fetch the URL, and stream it back
@@ -136,19 +148,19 @@ class ResponseCache:
             self.log_message("URL exists in cache and is fresh:" + url)
         return self.cache_dict[url]['headers'], self.cache_dict[url]['response']
 
-
+    # Get the referer URL (e.g. http://localhost:PORT/proxy/www.google.com/search?q=something)
+    # from the headers, strip out "localhost:PORT/proxy/, and return ("www.google.com", "search?q=something)
     def parse_referer_info(self, request):
-        ref = request.headers.get('referer')
-        if ref:
-            uri = urlparse(ref).path
-
+        referer = request.headers.get('referer')
+        if referer:
+            uri = urlparse(referer).path
             if uri.find("/") < 0:
                 return None
             uri_split = uri.split("/", 2)
             if uri_split[1] in "proxyd":
                 parts = uri_split[2].split("/", 1)
-                r = (parts[0], parts[1]) if len(parts) == 2 else (parts[0], "")
-                return r
+                referer_info = (parts[0], parts[1]) if len(parts) == 2 else (parts[0], "")
+                return referer_info
         return None
 
     # Error checking and warnings for the configuration file

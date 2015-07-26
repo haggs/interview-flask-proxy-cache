@@ -3,17 +3,16 @@
 # requests and forwards them on their destination using a simple caching layer represented by the
 # ResponseCache class. Port number and cache configuration are set in conf.py.
 #
-# Usage: Run this file (python server.py).
-#        Navigate to localhost:PORT/proxyinfo to see the status of the cache
-#        Navigate to localhost:PORT/proxy/www.google.com (for example) to use the proxy
+# Usage:    Run this file (python server.py)
+#           Navigate to localhost:PORT/proxyinfo to see the status of the cache
+#           Navigate to localhost:PORT/proxy/www.google.com (for example) to use the proxy
 #
-# Requirements: Python 2.7
-#               Flask
-#               requests
+# Requirements:    Python 2.7
+#                  Flask
+#                  requests
 #
-# Author: Dan Haggerty, daniel.r.haggerty@gmail.com
-# Date:   July 25th, 2015
-#
+# Author:    Dan Haggerty, daniel.r.haggerty@gmail.com
+# Date:      July 25th, 2015
 #########################################################################################################
 from flask import Flask, url_for, render_template, request, abort, Response, redirect
 import requests
@@ -62,66 +61,28 @@ def render_proxyinfo_page():
                            cache_size_elements = CACHE_SIZE_ELEMENTS,
                            response_cache = CACHE,)
 
-#
+
+# A request was made to /proxy/URL, get the response from the cache
+# and return it
 @app.route('/proxy/<path:url>')
 def proxy(url):
+    LOG.info("Received request for /proxy/" + str(url))
     headers, request_content = CACHE.get(url)
-    # LOG.info("Got %s response from %s",r.status_code, url)
-    def generate():
-        for chunk in request_content:
-            yield chunk
-    return Response(generate(), headers = headers)
+    return Response((part for part in request_content), headers = headers)
 
-#
+
+# A request was made to /URL, if this is coming from a proxy request,
+# prefix URL with /proxy/ + the referer URL and redirect
 @app.route('/<path:url>')
 def root(url):
-    # LOG.info("Root route, path: %s", url)
-    # If referred from a proxy request, then redirect to a URL with the proxy prefix.
-    # This allows server-relative and protocol-relative URLs to work.
-    proxy_ref = CACHE.parse_referer_info(request)
-    if proxy_ref:
-        redirect_url = "/proxy/%s/%s%s" % (proxy_ref[0], url, ("?" + request.query_string if request.query_string else ""))
-        # LOG.info("Redirecting referred URL to: %s", redirect_url)
-        return redirect(redirect_url)
-    # Otherwise, default behavior
+    LOG.info("Received request for /" + str(url))
+    referer_info = CACHE.parse_referer_info(request)
+    if referer_info:
+        url_redirect = "/proxy/" + referer_info[0] + "/" + url + ("?" + request.query_string if request.query_string else "")
+        LOG.info("Redirecting URL to " + url_redirect)
+        return redirect(url_redirect)
     return render_proxyinfo_page()
 
-
-
-
-# # Fetches the specified URL and streams it out to the client.
-# # If the request was referred by the proxy itself (e.g. this is an image fetch for
-# # a previously proxied HTML page), then the original Referer is passed.
-# def get_response(url):
-#     url = 'http://%s' % url
-#     # LOG.info("Fetching %s", url)
-#     # Ensure the URL is approved, else abort
-#     # Pass original Referer for subsequent resource requests
-#     proxy_ref = parse_referer_info(request)
-#     headers = { "Referer" : "http://%s/%s" % (proxy_ref[0], proxy_ref[1])} if proxy_ref else {}
-#     # Fetch the URL, and stream it back
-#     # LOG.info("Fetching with headers: %s, %s", url, headers)
-#     return requests.get(url, stream=True , params = request.args, headers=headers)
-
-# Parses out Referer info indicating the request is from a previously proxied page.
-#     For example, if:
-#         Referer: http://localhost:8080/p/google.com/search?q=foo
-#     then the result is:
-#         ("google.com", "search?q=foo")
-# def parse_referer_info(request):
-#
-#     ref = request.headers.get('referer')
-#     if ref:
-#         uri = urlparse(ref).path
-#
-#         if uri.find("/") < 0:
-#             return None
-#         uri_split = uri.split("/", 2)
-#         if uri_split[1] in "proxyd":
-#             parts = uri_split[2].split("/", 1)
-#             r = (parts[0], parts[1]) if len(parts) == 2 else (parts[0], "")
-#             return r
-#     return None
 
 # Run the server
 app.run(debug=True, port=PORT)
