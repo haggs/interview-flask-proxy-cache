@@ -115,9 +115,16 @@ class ResponseCache:
             self.log_message("Reached cache size Byte limit, deleting oldest record(s)")
             self.delete_oldest()
 
+        headers = dict(req.headers)
+
+        # Remove the content-encoding header. This header was causing the proxy to break
+        # on websites other than google, and by trial and error we found it to be the culprit.
+        if 'content-encoding' in headers:
+            del headers['content-encoding']
+
         # Finally add the response, its headers, and the time we updated the record to the internal cache dictionary.
         self.cache_dict[url] = { "response" : response,
-                                 "headers"  : dict(req.headers),
+                                 "headers"  : headers,
                                  "last_updated" : datetime.now()
                                }
 
