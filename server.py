@@ -85,5 +85,5 @@ def root(url):
 
 
 # Run the server
-app.run(debug=True, port=PORT)
+app.run(host='0.0.0.0', port=PORT)
 
