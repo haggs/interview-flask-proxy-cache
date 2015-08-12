@@ -64,7 +64,7 @@ class ResponseCache:
 
     # Gets the size of a response, which is represented as a list of elements of 1024 Bytes
     def get_size(self, url):
-        return sys.getsizeof(self.cache_dict[url]['response'])
+        return sys.getsizeof(self.cache_dict[url]['response']) + sys.getsizeof(self.cache_dict[url]['headers'])
 
     def get_total_size(self):
         size = 0
