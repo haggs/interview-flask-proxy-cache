@@ -1,6 +1,8 @@
 # Cached Proxy Server
-This is a simple Flask app that acts as a caching proxy for GET requests. It accepts incoming GET
-requests and forwards them on their destination using a simple caching layer represented by the
+This is a simple Flask app that acts as a caching proxy for GET requests. This is for a take-home interview I did in 2015.
+
+
+It accepts incoming GET requests and forwards them on their destination using a simple caching layer represented by the
 ResponseCache class.
 
 I developed this app for an interview task, and I figured I'd use it as an opportunity to mess
